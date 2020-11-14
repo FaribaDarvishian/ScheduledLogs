@@ -1,4 +1,4 @@
-package com.example.scheduledlogs;
+package com.example.scheduledlogs.controller.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+
+import com.example.scheduledlogs.R;
 
 public class LogFragment extends Fragment {
     private Button mStartButton;
