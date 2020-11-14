@@ -26,7 +26,7 @@ public class LogWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log log = new Log("reza",checkNetworkEnabled());
+        Log log = new Log("Fariba",checkNetworkEnabled());
         LogRepository repository=LogRepository.getInstance(getApplicationContext());
         repository.insertLog(log);
 
