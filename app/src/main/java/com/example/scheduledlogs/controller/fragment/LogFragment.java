@@ -7,13 +7,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import com.example.scheduledlogs.R;
+import com.example.scheduledlogs.model.Log;
+import com.example.scheduledlogs.repository.LogRepository;
+import com.example.scheduledlogs.worker.LogWorker;
+
+import java.util.List;
 
 public class LogFragment extends Fragment {
     private Button mStartButton;
     private Button mStopButton;
     private TextView mTextViewLog;
+    private LogRepository mRepository;
+    private List<Log> mLogList;
 
     public LogFragment() {
         // Required empty public constructor
@@ -29,7 +37,7 @@ public class LogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //TODO
+        mRepository=LogRepository.getInstance(getContext());
     }
 
     @Override
@@ -42,13 +50,32 @@ public class LogFragment extends Fragment {
         initTextView();
 
 
-      //TODO
-
+        mRepository.getLogsLiveData().observe(getViewLifecycleOwner(), new Observer<List<Log>>() {
+            @Override
+            public void onChanged(List<Log> logs) {
+                android.util.Log.d("LST", "onChanged:");
+                if(mLogList!=null&&mLogList.size()!=0){
+                    for (Log log : logs) {
+                        if(!mLogList.contains(log)){
+                            mLogList.add(log);
+                            mTextViewLog.append(log.getLogMessage());
+                        }
+                    }
+                }else{
+                    mLogList=logs;
+                }
+            }
+        });
         return view;
     }
 
     private void initTextView() {
-       //TODO
+        mLogList=mRepository.getLogsLiveData().getValue();
+        if(mLogList!=null&&mLogList.size()!=0){
+            for (Log log:mLogList) {
+                mTextViewLog.append(log.getLogMessage());
+            }
+        }
     }
 
     private void findViews(View view) {
@@ -58,6 +85,8 @@ public class LogFragment extends Fragment {
     }
 
     private void setListeners(){
-       //TODO
+        mStartButton.setOnClickListener(view -> LogWorker.ScheduleWork(getContext()));
+
+        mStopButton.setOnClickListener(view -> LogWorker.cancelWork(getContext()));
     }
 }
